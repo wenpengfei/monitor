@@ -1,0 +1,37 @@
+defaultEntryPoints = ["http", "https"]
+
+[metrics]
+  [metrics.prometheus]
+    entryPoint = "dashboard"
+    buckets = [0.1,0.3,1.2,5.0]
+
+[entryPoints]
+  [entryPoints.dashboard]
+    address = ":8080"
+    [entryPoints.dashboard.auth]
+      [entryPoints.dashboard.auth.basic]
+        users = ["admin:$apr1$19QaA1n1$pSXbhasDra3x5.8IPm5UN/"]
+  [entryPoints.http]
+    address = ":80"
+      [entryPoints.http.redirect]
+        entryPoint = "https"
+  [entryPoints.https]
+    address = ":443"
+      [entryPoints.https.tls]
+
+[api]
+entrypoint="dashboard"
+  [api.statistics]
+    recentErrors = 30
+
+[acme]
+email = "jquery.min.js@gmail.com"
+storage = "acme.json"
+entryPoint = "https"
+onHostRule = true
+  [acme.httpChallenge]
+  entryPoint = "http"
+
+[docker]
+watch = true
+network = "web"

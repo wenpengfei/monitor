@@ -1,0 +1,58 @@
+version: '3'
+
+networks:
+  web:
+    external: true
+  internal:
+    external: false
+
+services:
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert.rules:/etc/prometheus/alert.rules
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - '9090:9090'
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+
+  node-exporter:
+    image: prom/node-exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/host/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+    ports:
+      - '9100:9100'
+    networks:
+      - internal
+    labels:
+      - traefik.enable=false
+      
+  grafana:
+    image: grafana/grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=pass@word
+    depends_on:
+      - prometheus
+    labels:
+      - 'traefik.backend=grafana'
+      - 'traefik.frontend.rule=Host:grafana.domain.com'
+      - 'traefik.port=3000'
+    networks:
+      - internal
+      - web
+volumes:
+  grafana_data: {}
+  prometheus_data: {}
