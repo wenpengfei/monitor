@@ -36,6 +36,7 @@ services:
       - internal
     labels:
       - 'traefik.frontend.rule=Host:prometheus.${HOST_NAME}'
+      - 'traefik.frontend.auth.basic=admin:$$apr1$$19QaA1n1$$pSXbhasDra3x5.8IPm5UN/'
       - 'traefik.port=9090'
 
   node-exporter:
