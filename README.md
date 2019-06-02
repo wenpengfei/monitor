@@ -1,7 +1,2 @@
-# monitor
-traefik prometheus node-export grafana docker-compose
-
-```bash
-docker network create web
-chmod 600 acme.json
-```
+# node-prometheus-monitor
+Monitor linux server with prometheus stack(node exporter, prometheus, grafana, alert)

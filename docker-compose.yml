@@ -7,6 +7,21 @@ networks:
     external: false
 
 services:
+  traefik:
+    image: traefik
+    networks:
+      - web
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/traefik.toml:/traefik.toml
+      - $PWD/acme.json:/acme.json
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - traefik.frontend.rule=Host:traefik.domain.com
+      - traefik.port=8080
+
   prometheus:
     image: prom/prometheus
     volumes:
@@ -15,8 +30,6 @@ services:
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-    ports:
-      - '9090:9090'
     networks:
       - internal
     labels:
@@ -31,8 +44,6 @@ services:
     command:
       - '--path.procfs=/host/proc'
       - '--path.sysfs=/host/sys'
-    ports:
-      - '9100:9100'
     networks:
       - internal
     labels:
@@ -45,6 +56,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=pass@word
     depends_on:
+      - traefik
       - prometheus
     labels:
       - 'traefik.backend=grafana'
