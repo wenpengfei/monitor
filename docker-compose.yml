@@ -20,8 +20,8 @@ services:
       - 80:80
       - 443:443
     labels:
-      - 'traefik.frontend.rule=Host:traefik.${HOST_NAME}'
-      - 'traefik.port=8080'
+      - traefik.frontend.rule=Host:traefik.${HOST_NAME}
+      - traefik.port=8080
 
   prometheus:
     image: prom/prometheus
@@ -35,9 +35,9 @@ services:
       - web
       - internal
     labels:
-      - 'traefik.frontend.rule=Host:prometheus.${HOST_NAME}'
-      - 'traefik.frontend.auth.basic=admin:$$apr1$$19QaA1n1$$pSXbhasDra3x5.8IPm5UN/'
-      - 'traefik.port=9090'
+      - traefik.frontend.rule=Host:prometheus.${HOST_NAME}
+      - traefik.frontend.auth.basic=admin:$$apr1$$19QaA1n1$$pSXbhasDra3x5.8IPm5UN/
+      - traefik.port=9090
 
   node-exporter:
     image: prom/node-exporter
@@ -51,21 +51,22 @@ services:
     networks:
       - internal
     labels:
-      - 'traefik.enable=false'
+      - traefik.enable=false
       
   grafana:
     image: grafana/grafana
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
-      - 'GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}'
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel
     depends_on:
       - traefik
       - prometheus
     labels:
-      - 'traefik.backend=grafana'
-      - 'traefik.frontend.rule=Host:grafana.${HOST_NAME}'
-      - 'traefik.port=3000'
+      - traefik.backend=grafana
+      - traefik.frontend.rule=Host:grafana.${HOST_NAME}
+      - traefik.port=3000
     networks:
       - internal
       - web
