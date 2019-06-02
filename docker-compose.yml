@@ -10,6 +10,7 @@ services:
   traefik:
     image: traefik
     networks:
+      - internal
       - web
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -32,6 +33,7 @@ services:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
       - web
+      - internal
     labels:
       - 'traefik.frontend.rule=Host:prometheus.${HOST_NAME}'
       - 'traefik.port=9090'
