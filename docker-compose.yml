@@ -9,6 +9,7 @@ networks:
 services:
   traefik:
     image: traefik
+    restart: always
     networks:
       - internal
       - web
@@ -52,7 +53,7 @@ services:
       - internal
     labels:
       - traefik.enable=false
-      
+
   grafana:
     image: grafana/grafana
     volumes:
